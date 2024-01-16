@@ -6,21 +6,21 @@ pipelines:
     lock_behavior: none
     display_order: -1
     materials:
-     git-03aa32c:
+     ansible:
         git: https://github.com/Priya-Devops2023/expense-ansible
         shallow_clone: false
         auto_update: true
         branch: main
     stages:
+    - Dev:
       - test-stage:
           fetch_materials: true
           keep_artifacts: false
           clean_workspace: false
           approval:
-            type: success
-            allow_only_on_success: false
+            type: manual
           jobs:
-            test-job:
+            deployment:
               timeout: 0
               tasks:
                 - exec:
