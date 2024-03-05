@@ -1,72 +1,63 @@
-format_version: 10
-pipelines:
-  backend:
-    group: defaultGroup
-    label_template: "${COUNT}"
-    lock_behavior: none
-    display_order: -1
-    materials:
-      ansible:
-        git: https://github.com/Priya-Devops2023/expense-ansible.git
-        shallow_clone: false
-        auto_update: true
-        branch: main
-    stages:
-      - DEV:
-          fetch_materials: true
-          approval:
-            type: manual
-          jobs:
-            deployment:
-              timeout: 0
-              tasks:
-                - exec:
-                    command: ansible-playbook
-                    arguments: ["-i", "backend-dev.pdp2023.online,", "-e", "ansible_user=centos", "-e", "ansible_password=DevOps321", "expense.yml", "-e", "service_name=backend", "-e", "env=dev"]
 
+- name: Backend Setup
+  hosts: all
+  become: yes
+  tasks:
+    - name: Disable Default Version of NodeJS
+      ansible.builtin.shell: dnf module disable nodejs -y
+    - name: Enable NodeJS18 Version
+      ansible.builtin.shell: dnf module enable nodejs:18 -y
 
-      - QA:
-          fetch_materials: true
-          approval:
-            type: manual
-            allow_only_on_success: true
-          jobs:
-            deployment:
-              timeout: 0
-              tasks:
-                - exec:
-                    command: ls
-                    arguments:
-                      - -l
-                      - -A
+    - name Install NodeJS
+    - name: Install NodeJS
+      ansible.builtin.dnf:
+        name: nodejs
+        state: installed
+    - name: Configure Backend Service
+      ansible.builtin.copy:
+        src: backend.service
+        dest: /etc/systemd/system/backend.service
 
+    - name: Adding Application User
+      ansible.builtin.user:
+        name: expense
 
-      - UAT:
-          fetch_materials: true
-          approval:
-            type: manual
-            allow_only_on_success: true
-          jobs:
-            deployment:
-              timeout: 0
-              tasks:
-                - exec:
-                    command: ls
-                    arguments:
-                      - -l
-                      - -A
+    - name: Remove existing App content
+      ansible.builtin.file:
+        path: /app
+        state: absent
 
-      - PROD:
-          fetch_materials: true
-          approval:
-            type: manual
-            allow_only_on_success: true
-          jobs:
-            deployment:
-              timeout: 0
-              tasks:
-                - exec:
-                    command: ls
-                    arguments:
-                      - -l
-                      - -A
+    - name: Create Application Directory
+      ansible.builtin.file:
+        path: /app
+        state: directory
+
+    - name: Download and extract app content
+      ansible.builtin.unarchive:
+        src: https://expense-artifacts.s3.amazonaws.com/backend.zip
+        dest: /app
+        remote_src: true
+
+    - name: Download Dependencies
+      community.general.npm:
+        path: /app
+
+    - name: Reloading SystemD and Start Backend Service
+      ansible.builtin.systemd_service:
+        name: backend
+        state: restarted
+        enabled: yes
+
+    - name: Install MySQL Client
+      ansible.builtin.dnf:
+        src: mysql
+        state: installed
+
+    - name: Load Schema
+      community.mysql.mysql_db:
+        state: import
+        name: all
+        target: /app/schema/backend.sql
+        login_user: root
+        login_password: ExpenseApp@1
+        login_host: mysql-dev.pdp2023.online
