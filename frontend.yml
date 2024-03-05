@@ -2,17 +2,17 @@
   hosts: all
   become: true
   tasks:
-    - name: Install Nginx
-      ansible.builtin.dnf:
+   -name: Install Nginx
+  ansible.builtin.dnf:
         name: nginx
         state: installed
  # roles:
   #  - frontend
 
- #   - name: Copy Expense Configuration File
- #       ansible.builtin.copy:
- #       src: expense.conf
-#      dest: /etc/nginx/default.d/expense.conf
+  -name: Copy Expense Configuration File
+  ansible.builtin.copy:
+        src: expense.conf
+        dest: /etc/nginx/default.d/expense.conf
 
 #    - name: Delete Existing App Content
  #     ansible.builtin.file:
