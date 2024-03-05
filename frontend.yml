@@ -4,13 +4,13 @@
   tasks:
 
 - name: Install NodeJS
-  ansible.builtin.dnf:
+   ansible.builtin.dnf:
     name: nodejs
     state: installed
  # roles:
   #  - frontend
 - name: Copy Expense Configuration File
-  ansible.builtin.copy:
+   ansible.builtin.copy:
         src: expense.conf
         dest: /etc/nginx/default.d/expense.conf
 
