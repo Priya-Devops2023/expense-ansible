@@ -6,8 +6,8 @@
       ansible.builtin.dnf:
         name: nginx
         state: installed
-  roles:
-    - frontend
+ # roles:
+  #  - frontend
 
  #   - name: Copy Expense Configuration File
  #       ansible.builtin.copy:
