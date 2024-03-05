@@ -2,14 +2,14 @@
   hosts: all
   become: true
   tasks:
-   -name: Install Nginx
+
+- name: Install NodeJS
   ansible.builtin.dnf:
-        name: nginx
-        state: installed
+    name: nodejs
+    state: installed
  # roles:
   #  - frontend
-
-  -name: Copy Expense Configuration File
+- name: Copy Expense Configuration File
   ansible.builtin.copy:
         src: expense.conf
         dest: /etc/nginx/default.d/expense.conf
