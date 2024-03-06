@@ -8,57 +8,57 @@
     - name: Enable NodeJS18 Version
       ansible.builtin.shell: dnf module enable nodejs:18 -y
 
-####-#name#Install#NodeJS
-####-#name:#Install#NodeJS
-######ansible.builtin.dnf:
-########name:#nodejs
-########state:#installed
-########
-####-#name:#Configure#Backend#Service
-######ansible.builtin.copy:
-########src:#backend.service
-########dest:#/etc/systemd/system/backend.service
+    - name Install NodeJS
+    - name: Install NodeJS
+      ansible.builtin.dnf:
+        name: nodejs
+        state: installed
 
-####-#name:#Adding#Application#User
-######ansible.builtin.user:
-########name:#expense
+    - name: Configure Backend Service
+      ansible.builtin.copy:
+        src: backend.service
+        dest: /etc/systemd/system/backend.service
 
-####-#name:#Remove#existing#App#content
-######ansible.builtin.file:
-########path:#/app
-########state:#absent
+    - name: Adding Application User
+      ansible.builtin.user:
+        name: expense
 
-####-#name:#Create#Application#Directory
-######ansible.builtin.file:
-########path:#/app
-########state:#directory
+    - name: Remove existing App content
+      ansible.builtin.file:
+        path: /app
+        state: absent
 
-####-#name:#Download#and#extract#app#content
-######ansible.builtin.unarchive:
-########src:#https://expense-artifacts.s3.amazonaws.com/backend.zip
-########dest:#/app
-########remote_src:#true
+    - name: Create Application Directory
+      ansible.builtin.file:
+        path: /app
+        state: directory
 
-####-#name:#Download#Dependencies
-######community.general.npm:
-########path:#/app
+    - name: Download and extract app content
+      ansible.builtin.unarchive:
+        src: https://expense-artifacts.s3.amazonaws.com/backend.zip
+        dest: /app
+        remote_src: true
 
-####-#name:#Reloading#SystemD#and#Start#Backend#Service
-######ansible.builtin.systemd_service:
-########name:#backend
-########state:#restarted
-########enabled:#yes
+    - name: Download Dependencies
+      community.general.npm:
+        path: /app
 
-####-#name:#Install#MySQL#Client
-######ansible.builtin.dnf:
-########src:#mysql
-########state:#installed
+    - name: Reloading SystemD and Start Backend Service
+      ansible.builtin.systemd_service:
+        name: backend
+        state: restarted
+        enabled: yes
 
-####-#name:#Load#Schema
-######community.mysql.mysql_db:
-########state:#import
-########name:#all
-########target:#/app/schema/backend.sql
-########login_user:#root
-########login_password:#ExpenseApp@1
-#       login_host: mysql-dev.pdp2023.online
+    - name: Install MySQL Client
+      ansible.builtin.dnf:
+        src: mysql
+        state: installed
+
+    - name: Load Schema
+      community.mysql.mysql_db:
+        state: import
+        name: all
+        target: /app/schema/backend.sql
+        login_user: root
+        login_password: ExpenseApp@1
+        login_host: mysql-dev.pdp2023.online
