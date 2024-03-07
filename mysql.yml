@@ -1,8 +1,10 @@
+
  - name: MySQL Setup
    hosts: all
    become: yes
 #   roles:
 #    -mysql
+
  - name: Disable MySQL Module Default Version
    ansible.builtin.shell: dnf module disable mysql -y
 
