@@ -5,8 +5,8 @@
 #   roles:
 #    -mysql
 
- - name: Disable MySQL Module Default Version
-   ansible.builtin.shell: dnf module disable mysql -y
+ #- name: Disable MySQL Module Default Version
+ #  ansible.builtin.shell: dnf module disable mysql -y
 
  - name: Copy MySQL Repo file
    ansible.builtin.copy:
