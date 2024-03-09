@@ -39,7 +39,7 @@
     state: installed
   loop:
     - mysql
- #   - python3-PyMySQL
+    - python3-PyMySQL
 
 - name: Load Schema
   community.mysql.mysql_db:
