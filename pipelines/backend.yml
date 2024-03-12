@@ -21,8 +21,12 @@ pipelines:
               timeout: 0
               tasks:
                 - exec:
-                    command: ansible-playbook
-                    arguments: ["-i", "backend-dev.pdp2023.online,", "-e", "ansible_user=centos", "-e", "ansible_password=DevOps321", "backend.yml", "-e", "env=dev"]
+                    command: ls
+                    arguments:
+                      - -l
+                      - -A
+                   # command: ansible-playbook
+                    #arguments: ["-i", "backend-dev.pdp2023.online,", "-e", "ansible_user=centos", "-e", "ansible_password=DevOps321", "backend.yml", "-e", "env=dev"]
 
 
       - QA:
